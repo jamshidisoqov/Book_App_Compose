@@ -131,29 +131,49 @@ fun CustomProgressBarPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CustomSearchView(
+fun CustomSearchView(
     hint: String,
     text: String,
     modifier: Modifier,
     onValueChange: (String) -> Unit
 ) {
-    TextField(
-        value = text,
-        modifier = modifier, placeholder = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = "Search"
-                )
-                Text(
-                    text = hint,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        },
-        shape = RoundedCornerShape(ROUNDED_CORNER),
-        onValueChange = onValueChange::invoke
-    )
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.White)
+            .padding(HORIZONTAL_MARGIN_STD),
+        shadowElevation = 4.dp
+    ) {
+
+        TextField(
+            value = text,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent),
+            placeholder = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search),
+                        contentDescription = "Search"
+                    )
+                    Text(
+                        text = hint,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            },
+            shape = RoundedCornerShape(ROUNDED_CORNER),
+            onValueChange = onValueChange::invoke,
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.Gray,
+                disabledTextColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                containerColor = Color.Transparent
+            )
+        )
+    }
 }
 
 @Preview
@@ -294,7 +314,7 @@ fun MultiStyleTextPreview() {
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SmsCodeView(
+fun CustomSmsCodeView(
     smsCodeLength: Int,
     textFieldColors: TextFieldColors,
     textStyle: TextStyle,
@@ -317,8 +337,8 @@ fun SmsCodeView(
         for (index in 0 until smsCodeLength) {
             OutlinedTextField(
                 modifier = Modifier
-                    .width(46.dp)
-                    .height(60.dp)
+                    .width(48.dp)
+                    .height(48.dp)
                     .focusRequester(focusRequester = focusRequesters[index])
                     .onKeyEvent { keyEvent: KeyEvent ->
                         val currentValue = enteredNumbers.getOrNull(index) ?: ""
@@ -364,7 +384,7 @@ fun SmsCodeView(
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
-                ),
+                ), shape = RoundedCornerShape(ROUNDED_CORNER)
             )
             val fulled = enteredNumbers.joinToString(separator = "")
             if (fulled.length == smsCodeLength) {
