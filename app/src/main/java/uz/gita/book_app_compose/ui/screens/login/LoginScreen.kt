@@ -32,7 +32,7 @@ fun LoginScreenContent() {
 
         var phoneBool by remember { mutableStateOf(false) }
         var passwordBool by remember { mutableStateOf(false) }
-        var isEnabledLogin by remember { mutableStateOf(phoneBool && passwordBool) }
+        val isEnabledLogin by remember { mutableStateOf(phoneBool && passwordBool) }
         CustomTopBar(
             title = "Login", modifier = Modifier
                 .fillMaxWidth()

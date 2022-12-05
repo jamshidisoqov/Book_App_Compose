@@ -294,7 +294,7 @@ fun MultiStyleTextPreview() {
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SmsCodeView(
+fun CustomSmsCodeView(
     smsCodeLength: Int,
     textFieldColors: TextFieldColors,
     textStyle: TextStyle,
@@ -317,8 +317,8 @@ fun SmsCodeView(
         for (index in 0 until smsCodeLength) {
             OutlinedTextField(
                 modifier = Modifier
-                    .width(46.dp)
-                    .height(60.dp)
+                    .width(48.dp)
+                    .height(48.dp)
                     .focusRequester(focusRequester = focusRequesters[index])
                     .onKeyEvent { keyEvent: KeyEvent ->
                         val currentValue = enteredNumbers.getOrNull(index) ?: ""
@@ -364,7 +364,7 @@ fun SmsCodeView(
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Number,
-                ),
+                ), shape = RoundedCornerShape(ROUNDED_CORNER)
             )
             val fulled = enteredNumbers.joinToString(separator = "")
             if (fulled.length == smsCodeLength) {
