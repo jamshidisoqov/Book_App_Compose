@@ -131,29 +131,49 @@ fun CustomProgressBarPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CustomSearchView(
+fun CustomSearchView(
     hint: String,
     text: String,
     modifier: Modifier,
     onValueChange: (String) -> Unit
 ) {
-    TextField(
-        value = text,
-        modifier = modifier, placeholder = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_search),
-                    contentDescription = "Search"
-                )
-                Text(
-                    text = hint,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
-        },
-        shape = RoundedCornerShape(ROUNDED_CORNER),
-        onValueChange = onValueChange::invoke
-    )
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.White)
+            .padding(HORIZONTAL_MARGIN_STD),
+        shadowElevation = 4.dp
+    ) {
+
+        TextField(
+            value = text,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent),
+            placeholder = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_search),
+                        contentDescription = "Search"
+                    )
+                    Text(
+                        text = hint,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+            },
+            shape = RoundedCornerShape(ROUNDED_CORNER),
+            onValueChange = onValueChange::invoke,
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.Gray,
+                disabledTextColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                containerColor = Color.Transparent
+            )
+        )
+    }
 }
 
 @Preview
