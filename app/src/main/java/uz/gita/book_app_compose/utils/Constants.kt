@@ -1,5 +1,6 @@
 package uz.gita.book_app_compose.utils
 
+import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 
 // Created by Jamshid Isoqov on 12/5/2022

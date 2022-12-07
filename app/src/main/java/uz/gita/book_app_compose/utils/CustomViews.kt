@@ -203,11 +203,10 @@ fun CustomTopBarWithNavigate(
 ) {
     var selected by remember { mutableStateOf(false) }
     Surface(shadowElevation = 4.dp, modifier = modifier) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxHeight(),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
