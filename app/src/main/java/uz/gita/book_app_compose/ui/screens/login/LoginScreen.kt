@@ -10,6 +10,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import org.orbitmvi.orbit.compose.collectAsState
+import uz.gita.book_app_compose.ui.screens.register.RegisterScreen
+import uz.gita.book_app_compose.ui.screens.verify.VerifyScreen
 import uz.gita.book_app_compose.ui.theme.Primary
 import uz.gita.book_app_compose.utils.*
 
@@ -17,12 +24,28 @@ import uz.gita.book_app_compose.utils.*
 class LoginScreen : AndroidScreen() {
     @Composable
     override fun Content() {
-
+        val viewModel: LoginViewModel = getViewModel<LoginViewModelImpl>()
+        LoginScreenContent(
+            uiState = viewModel.collectAsState().value,
+            onEventDispatcher = viewModel::onEventDispatcher
+        )
     }
 }
 
 @Composable
-fun LoginScreenContent() {
+fun LoginScreenContent(uiState: LoginUiState, onEventDispatcher: (LoginIntent) -> Unit) {
+    val navigator: Navigator = LocalNavigator.currentOrThrow
+    when (uiState) {
+        is LoginUiState.Success -> {
+            CustomProgressBar(progress = uiState.isLoading, modifier = Modifier.fillMaxSize())
+            if (uiState.openMainScreen) {
+                navigator.push(VerifyScreen())
+            }
+        }
+        is LoginUiState.Progress -> {
+            CustomProgressBar(progress = uiState.isLoading, modifier = Modifier.fillMaxSize())
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -33,6 +56,7 @@ fun LoginScreenContent() {
         var phoneBool by remember { mutableStateOf(false) }
         var passwordBool by remember { mutableStateOf(false) }
         val isEnabledLogin by remember { mutableStateOf(phoneBool && passwordBool) }
+
         CustomTopBar(
             title = "Login", modifier = Modifier
                 .fillMaxWidth()
@@ -79,7 +103,8 @@ fun LoginScreenContent() {
             color2 = Primary,
             modifier = Modifier
         ) {
-
+            navigator.pop()
+            navigator.push(RegisterScreen())
         }
         CustomAppBottomButton(
             text = "Login",
@@ -91,7 +116,7 @@ fun LoginScreenContent() {
                 .fillMaxWidth(),
             isEnabled = isEnabledLogin
         ) {
-
+            onEventDispatcher.invoke(LoginIntent.Login(phone, password))
         }
     }
 }
@@ -99,6 +124,6 @@ fun LoginScreenContent() {
 @Preview(showSystemUi = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreenContent()
+    LoginScreenContent(LoginUiState.Progress(isLoading = true)) {}
 }
 
