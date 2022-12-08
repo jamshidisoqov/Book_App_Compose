@@ -2,6 +2,7 @@
 
 package uz.gita.book_app_compose.ui.screens.main
 
+import android.view.MotionEvent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -90,7 +91,9 @@ fun MyBookItem(
                     )
                     .padding(8.dp)
                     .pointerInteropFilter {
-
+                        if (it.action==MotionEvent.ACTION_UP){
+                            onFavourite.invoke(!bookData.fav)
+                        }
                         true
                     },
                 painter = painterResource(id = R.drawable.ic_heart),
@@ -111,7 +114,9 @@ fun MyBookItem(
                     )
                     .padding(8.dp)
                     .pointerInteropFilter {
-
+                        if (it.action==MotionEvent.ACTION_UP){
+                            onEdit.invoke()
+                        }
                         true
                     }
             )
@@ -128,7 +133,9 @@ fun MyBookItem(
                     )
                     .padding(8.dp)
                     .pointerInteropFilter {
-
+                        if (it.action==MotionEvent.ACTION_UP){
+                            onDelete.invoke()
+                        }
                         true
                     }
             )

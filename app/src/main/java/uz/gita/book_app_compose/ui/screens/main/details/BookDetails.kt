@@ -14,13 +14,14 @@ import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.androidx.AndroidScreen
+import uz.gita.book_app_compose.data.remote.response.BookData
 import uz.gita.book_app_compose.ui.screens.main.details.components.BookDetailsInfo
 import uz.gita.book_app_compose.ui.theme.Primary
 import uz.gita.book_app_compose.utils.CustomTopBarWithNavigate
 import uz.gita.book_app_compose.utils.HORIZONTAL_MARGIN_STD
 
 // Created by Jamshid Isoqov on 12/7/2022
-class BookDetails : AndroidScreen() {
+class BookDetails(bookData: BookData) : AndroidScreen() {
     @Composable
     override fun Content() {
 
