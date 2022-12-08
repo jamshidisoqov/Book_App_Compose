@@ -10,6 +10,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import org.orbitmvi.orbit.compose.collectAsState
+import uz.gita.book_app_compose.data.remote.request.UserDto
+import uz.gita.book_app_compose.ui.screens.login.LoginScreen
+import uz.gita.book_app_compose.ui.screens.verify.VerifyScreen
 import uz.gita.book_app_compose.ui.theme.Primary
 import uz.gita.book_app_compose.utils.*
 
@@ -17,12 +25,28 @@ import uz.gita.book_app_compose.utils.*
 class RegisterScreen : AndroidScreen() {
     @Composable
     override fun Content() {
-
+        val viewModel: RegisterViewModel = getViewModel<RegisterViewModelImpl>()
+        RegisterScreenContent(
+            registerUiState = viewModel.collectAsState().value,
+            onEventDispatcher = viewModel::onEventDispatcher
+        )
     }
 }
 
 @Composable
-fun RegisterScreenContent() {
+fun RegisterScreenContent(
+    registerUiState: RegisterUiState,
+    onEventDispatcher: (RegisterIntent) -> Unit
+) {
+    val navigator: Navigator = LocalNavigator.currentOrThrow
+
+    if (registerUiState.openVerifyScreen) {
+        navigator.push(VerifyScreen(2))
+    }
+    if (registerUiState.isLoading) {
+        CustomProgressBar(progress = true, modifier = Modifier.fillMaxSize())
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -39,12 +63,6 @@ fun RegisterScreenContent() {
         var passwordBool by remember { mutableStateOf(false) }
         var confirmPasswordBool by remember { mutableStateOf(false) }
 
-        val isEnabledRegister by remember {
-            mutableStateOf(
-                phoneBool && firstNameBool && lastNameBool &&
-                        passwordBool && confirmPasswordBool
-            )
-        }
         CustomTopBar(
             title = "Register", modifier = Modifier
                 .fillMaxWidth()
@@ -134,7 +152,7 @@ fun RegisterScreenContent() {
             color2 = Primary,
             modifier = Modifier
         ) {
-
+            navigator.replace(LoginScreen())
         }
         CustomAppBottomButton(
             text = "Register",
@@ -144,9 +162,10 @@ fun RegisterScreenContent() {
                     vertical = VERTICAL_MARGIN_STD
                 )
                 .fillMaxWidth(),
-            isEnabled = isEnabledRegister
+            isEnabled = phoneBool && firstNameBool && lastNameBool &&
+                    passwordBool && confirmPasswordBool
         ) {
-
+            onEventDispatcher.invoke(RegisterIntent(UserDto(firstName, lastName, phone, password)))
         }
     }
 }
@@ -154,5 +173,7 @@ fun RegisterScreenContent() {
 @Preview(showSystemUi = true)
 @Composable
 fun RegisterScreenPreview() {
-    RegisterScreenContent()
+    RegisterScreenContent(RegisterUiState()) {
+
+    }
 }

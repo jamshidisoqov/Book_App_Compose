@@ -13,21 +13,53 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import org.orbitmvi.orbit.compose.collectAsState
+import uz.gita.book_app_compose.data.remote.request.CodeDto
+import uz.gita.book_app_compose.ui.screens.main.MainScreen
 import uz.gita.book_app_compose.ui.theme.Primary
 import uz.gita.book_app_compose.utils.*
 
 // Created by Jamshid Isoqov on 12/5/2022
 
-class VerifyScreen : AndroidScreen() {
+class VerifyScreen(private val type: Int) : AndroidScreen() {
     @Composable
     override fun Content() {
-
+        val viewModel: VerifyViewModel = getViewModel<VerifyViewModelImpl>()
+        VerifyScreenContent(
+            verifyUiState = viewModel.collectAsState().value,
+            onEventDispatcher = viewModel::onEventDispatcher,
+            type = type
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VerifyScreenContent() {
+fun VerifyScreenContent(
+    verifyUiState: VerifyUiState,
+    type: Int = 1,
+    onEventDispatcher: (VerifyIntent) -> Unit
+) {
+
+    val navigator = LocalNavigator.currentOrThrow
+
+    var code: String by remember {
+        mutableStateOf("")
+    }
+
+    if (verifyUiState.isLoading) {
+        CustomProgressBar(progress = true, modifier = Modifier.fillMaxSize())
+    }
+    LaunchedEffect(key1 = verifyUiState.openMainScreen) {
+        if (verifyUiState.openMainScreen) {
+            navigator.popUntilRoot()
+            navigator.replace(MainScreen())
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
 
         var isEnabled by remember { mutableStateOf(false) }
@@ -52,6 +84,7 @@ fun VerifyScreenContent() {
             textStyle = MaterialTheme.typography.titleMedium
         ) {
             isEnabled = it.length == 6
+            code = it
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -76,7 +109,8 @@ fun VerifyScreenContent() {
                 .fillMaxWidth(),
             isEnabled = isEnabled
         ) {
-
+            isEnabled = false
+            onEventDispatcher.invoke(VerifyIntent(codeDto = CodeDto(code), type))
         }
 
 
@@ -86,5 +120,7 @@ fun VerifyScreenContent() {
 @Preview(showSystemUi = true)
 @Composable
 fun VerifyScreenPreview() {
-    VerifyScreenContent()
+    VerifyScreenContent(VerifyUiState()) {
+
+    }
 }
