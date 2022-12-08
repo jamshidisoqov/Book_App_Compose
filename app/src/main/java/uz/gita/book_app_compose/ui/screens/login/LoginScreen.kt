@@ -1,5 +1,7 @@
 package uz.gita.book_app_compose.ui.screens.login
 
+import android.util.Log
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
@@ -32,14 +34,21 @@ class LoginScreen : AndroidScreen() {
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun LoginScreenContent(uiState: LoginUiState, onEventDispatcher: (LoginIntent) -> Unit) {
+    Log.d("TTT", "LoginScreenContent: Keldi")
     val navigator: Navigator = LocalNavigator.currentOrThrow
+
+
+
     when (uiState) {
         is LoginUiState.Success -> {
             CustomProgressBar(progress = uiState.isLoading, modifier = Modifier.fillMaxSize())
-            if (uiState.openMainScreen) {
-                navigator.push(VerifyScreen())
+            LaunchedEffect(key1 = uiState.openMainScreen) {
+                if (uiState.openMainScreen) {
+                    navigator.push(VerifyScreen(1))
+                }
             }
         }
         is LoginUiState.Progress -> {
@@ -55,7 +64,6 @@ fun LoginScreenContent(uiState: LoginUiState, onEventDispatcher: (LoginIntent) -
 
         var phoneBool by remember { mutableStateOf(false) }
         var passwordBool by remember { mutableStateOf(false) }
-        val isEnabledLogin by remember { mutableStateOf(phoneBool && passwordBool) }
 
         CustomTopBar(
             title = "Login", modifier = Modifier
@@ -103,8 +111,7 @@ fun LoginScreenContent(uiState: LoginUiState, onEventDispatcher: (LoginIntent) -
             color2 = Primary,
             modifier = Modifier
         ) {
-            navigator.pop()
-            navigator.push(RegisterScreen())
+            navigator.replace(RegisterScreen())
         }
         CustomAppBottomButton(
             text = "Login",
@@ -114,7 +121,7 @@ fun LoginScreenContent(uiState: LoginUiState, onEventDispatcher: (LoginIntent) -
                     vertical = VERTICAL_MARGIN_STD
                 )
                 .fillMaxWidth(),
-            isEnabled = isEnabledLogin
+            isEnabled = phoneBool && passwordBool
         ) {
             onEventDispatcher.invoke(LoginIntent.Login(phone, password))
         }

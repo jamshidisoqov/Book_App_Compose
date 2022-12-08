@@ -27,7 +27,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigator(screen = SplashScreen()) {
+                    Navigator(screen = SplashScreen(), onBackPressed = {
+                        true
+                    }) {
                         SlideTransition(navigator = it)
                     }
                 }

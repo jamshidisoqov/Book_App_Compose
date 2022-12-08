@@ -337,7 +337,7 @@ fun CustomSmsCodeView(
             OutlinedTextField(
                 modifier = Modifier
                     .width(48.dp)
-                    .height(48.dp)
+                    .height(54.dp)
                     .focusRequester(focusRequester = focusRequesters[index])
                     .onKeyEvent { keyEvent: KeyEvent ->
                         val currentValue = enteredNumbers.getOrNull(index) ?: ""
