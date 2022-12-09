@@ -44,6 +44,7 @@ fun CustomEditText(
     text: String,
     modifier: Modifier,
     keyboardOption: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    singleLine:Boolean = true,
     onValueChange: (String) -> Unit
 ) {
     OutlinedTextField(
@@ -52,7 +53,8 @@ fun CustomEditText(
         modifier = modifier,
         label = { Text(text = hint) },
         keyboardOptions = keyboardOption,
-        shape = RoundedCornerShape(ROUNDED_CORNER)
+        shape = RoundedCornerShape(ROUNDED_CORNER),
+        singleLine = singleLine
     )
 }
 

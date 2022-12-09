@@ -15,8 +15,13 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import uz.gita.book_app_compose.data.remote.request.UserDto
+import uz.gita.book_app_compose.ui.dialogs.ErrorDialog
+import uz.gita.book_app_compose.ui.dialogs.MessageDialog
 import uz.gita.book_app_compose.ui.screens.login.LoginScreen
+import uz.gita.book_app_compose.ui.screens.login.LoginSideEffect
+import uz.gita.book_app_compose.ui.screens.login.MySideEffect
 import uz.gita.book_app_compose.ui.screens.verify.VerifyScreen
 import uz.gita.book_app_compose.ui.theme.Primary
 import uz.gita.book_app_compose.utils.*
@@ -30,6 +35,32 @@ class RegisterScreen : AndroidScreen() {
             registerUiState = viewModel.collectAsState().value,
             onEventDispatcher = viewModel::onEventDispatcher
         )
+
+        var errorState: String by remember { mutableStateOf("") }
+
+        var messageState: String by remember { mutableStateOf("") }
+
+        viewModel.collectSideEffect {
+            when (it) {
+                is MySideEffect.Error -> {
+                    errorState = it.error
+                }
+                is MySideEffect.Message -> {
+                    messageState = it.message
+                }
+            }
+        }
+
+        if (errorState.isNotEmpty()) {
+            ErrorDialog(error = errorState) {
+                errorState = ""
+            }
+        }
+        if (messageState.isNotEmpty()) {
+            MessageDialog(message = messageState) {
+                messageState = ""
+            }
+        }
     }
 }
 

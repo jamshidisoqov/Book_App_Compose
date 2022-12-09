@@ -29,7 +29,7 @@ interface BookApi {
     @POST("book")
     suspend fun updateBook(@Body updateBookDto: UpdateBookDto)
 
-    @DELETE("book")
+    @HTTP(method = "DELETE", path = "/book", hasBody = true)
     suspend fun deleteBook(@Body singleDto: SingleDto): Response<MessageData>
 
     @GET("books")
