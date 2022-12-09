@@ -1,5 +1,6 @@
 package uz.gita.book_app_compose.ui.screens.main.add
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.*
@@ -89,6 +90,7 @@ fun AddBookScreenContent(uiState: AddUiState, onEventDispatcher: (AddBookIntent)
                 .fillMaxWidth()
                 .height(56.dp)
         ) {
+            Log.d("TTT", "AddBookScreenContent: ")
             navigator.pop()
         }
         Spacer(
