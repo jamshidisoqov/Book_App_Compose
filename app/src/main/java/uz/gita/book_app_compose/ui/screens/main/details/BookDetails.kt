@@ -18,6 +18,7 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.orbitmvi.orbit.compose.collectAsState
 import uz.gita.book_app_compose.data.remote.response.BookData
 import uz.gita.book_app_compose.ui.screens.main.details.components.BookDetailsInfo
 import uz.gita.book_app_compose.ui.theme.Primary
@@ -33,6 +34,7 @@ class BookDetails(private val bookData: BookData) : AndroidScreen() {
         LaunchedEffect(key1 = Unit) {
             viewModel.setBookData(bookData = bookData)
         }
+        BookDetailsContent(uiState = viewModel.collectAsState().value, onEventDispatcher = viewModel::onEventDispatcher)
 
     }
 }

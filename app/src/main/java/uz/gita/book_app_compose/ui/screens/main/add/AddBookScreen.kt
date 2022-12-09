@@ -113,7 +113,7 @@ fun AddBookScreenContent(uiState: AddUiState, onEventDispatcher: (AddBookIntent)
 
         CustomEditText(
             hint = "Author",
-            text = pageCount,
+            text = author,
             modifier = Modifier
                 .padding(
                     horizontal = HORIZONTAL_MARGIN_STD,
@@ -127,7 +127,7 @@ fun AddBookScreenContent(uiState: AddUiState, onEventDispatcher: (AddBookIntent)
 
         CustomEditText(
             hint = "Page count",
-            text = title,
+            text = pageCount,
             modifier = Modifier
                 .padding(
                     horizontal = HORIZONTAL_MARGIN_STD,

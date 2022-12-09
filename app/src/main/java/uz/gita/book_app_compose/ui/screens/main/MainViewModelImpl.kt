@@ -30,8 +30,18 @@ class MainViewModelImpl @Inject constructor(
         when (intent) {
             is MainIntent.ChangeFavourite -> {
                 reduce { MainUiState.Loading(true) }
-                repository.updateBookStatus(SingleDto(intent.bookId))
-                getAllBooks()
+                repository.updateBookStatus(SingleDto(intent.bookId)).collectLatest {result->
+                    reduce { MainUiState.Loading(false) }
+                    result.onSuccess { getAllBooks() }
+                        .onMessage {
+                            postSideEffect(MyMainSideEffect.Message(it))
+                            reduce { MainUiState.Loading(isLoading = false) }
+                        }.onError {
+                            reduce { MainUiState.Loading(isLoading = false) }
+                            postSideEffect(MyMainSideEffect.Error(it.getMessage()))
+                        }
+
+                }
             }
 
             is MainIntent.DeleteBook -> postSideEffect(MyMainSideEffect.Delete(intent.bookData))

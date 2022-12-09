@@ -9,17 +9,46 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import org.orbitmvi.orbit.compose.collectAsState
+import org.orbitmvi.orbit.compose.collectSideEffect
 import uz.gita.book_app_compose.data.remote.response.BookData
 import uz.gita.book_app_compose.utils.*
 
 // Created by Jamshid Isoqov on 12/8/2022
-class UpdateBookScreen(bookData: BookData) : AndroidScreen() {
+class UpdateBookScreen(private val bookData: BookData) : AndroidScreen() {
     @Composable
     override fun Content() {
+        val viewModel: UpdateViewModel = getViewModel<UpdateViewModelImpl>()
 
+        var errorState: String by remember { mutableStateOf("") }
+
+        var messageState: String by remember { mutableStateOf("") }
+
+        val navigator = LocalNavigator.currentOrThrow
+
+        UpdateBookContent(
+            uiState = viewModel.collectAsState().value,
+            bookData = bookData,
+            onEventDispatcher = viewModel::onEventDispatcher
+        )
+
+        viewModel.collectSideEffect {
+            when (it) {
+                is UpdateSideEffect.Error -> {
+                    errorState = it.error
+                }
+                is UpdateSideEffect.Message -> {
+                    messageState = it.message
+                }
+                is UpdateSideEffect.Back -> {
+                    navigator.pop()
+                }
+            }
+        }
     }
 }
 
@@ -42,10 +71,10 @@ fun UpdateBookContent(
         var pageCount by remember { mutableStateOf(bookData.pageCount.toString()) }
         var description by remember { mutableStateOf(bookData.description) }
 
-        var titleBool by remember { mutableStateOf(false) }
-        var authorBool by remember { mutableStateOf(false) }
-        var pageCountBool by remember { mutableStateOf(false) }
-        var descriptionBool by remember { mutableStateOf(false) }
+        var titleBool by remember { mutableStateOf(true) }
+        var authorBool by remember { mutableStateOf(true) }
+        var pageCountBool by remember { mutableStateOf(true) }
+        var descriptionBool by remember { mutableStateOf(true) }
 
         CustomTopBarWithNavigate(
             title = "Update book", modifier = Modifier
@@ -76,7 +105,7 @@ fun UpdateBookContent(
 
         CustomEditText(
             hint = "Author",
-            text = pageCount,
+            text = author,
             modifier = Modifier
                 .padding(
                     horizontal = HORIZONTAL_MARGIN_STD,
@@ -90,7 +119,7 @@ fun UpdateBookContent(
 
         CustomEditText(
             hint = "Page count",
-            text = title,
+            text = pageCount,
             modifier = Modifier
                 .padding(
                     horizontal = HORIZONTAL_MARGIN_STD,
