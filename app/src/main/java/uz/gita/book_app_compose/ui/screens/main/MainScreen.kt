@@ -27,7 +27,9 @@ import uz.gita.book_app_compose.data.remote.response.BookData
 import uz.gita.book_app_compose.ui.dialogs.DeleteDialog
 import uz.gita.book_app_compose.ui.dialogs.ErrorDialog
 import uz.gita.book_app_compose.ui.dialogs.MessageDialog
+import uz.gita.book_app_compose.ui.screens.main.add.AddBookScreen
 import uz.gita.book_app_compose.ui.screens.main.details.BookDetails
+import uz.gita.book_app_compose.ui.screens.main.update.UpdateBookScreen
 import uz.gita.book_app_compose.ui.theme.Bg_Color
 import uz.gita.book_app_compose.ui.theme.Primary
 import uz.gita.book_app_compose.utils.CustomProgressBar
@@ -111,7 +113,9 @@ fun MainScreenContent(
             .background(color = Bg_Color),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {},
+                onClick = {
+                   navigator.push(AddBookScreen())
+                },
                 containerColor = Primary,
                 contentColor = Color.White
             ) {
@@ -158,7 +162,7 @@ fun MainScreenContent(
                                     )
                                 },
                                 onEdit = {
-                                    //Todo update navigator.push()
+                                    navigator.push(UpdateBookScreen(book))
                                 },
                                 onDelete = { onEvenDispatcher.invoke(MainIntent.DeleteBook(book)) }
                             )

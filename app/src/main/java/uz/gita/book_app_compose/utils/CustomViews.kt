@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -44,7 +45,7 @@ fun CustomEditText(
     text: String,
     modifier: Modifier,
     keyboardOption: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-    singleLine:Boolean = true,
+    singleLine: Boolean = true,
     onValueChange: (String) -> Unit
 ) {
     OutlinedTextField(
@@ -139,46 +140,53 @@ fun CustomSearchView(
     modifier: Modifier,
     onValueChange: (String) -> Unit
 ) {
+    val value: String by remember {
+        mutableStateOf(text)
+    }
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = Color.White)
-            .padding(HORIZONTAL_MARGIN_STD),
+        modifier = modifier,
         shadowElevation = 4.dp
     ) {
 
-        TextField(
-            value = text,
-            modifier = Modifier
+        Row(
+            Modifier
+                .padding(vertical = 10.dp, horizontal = 8.dp)
                 .fillMaxWidth()
-                .background(Color.Transparent),
-            placeholder = {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = "Search"
-                    )
-                    Text(
-                        text = hint,
-                        modifier = Modifier.padding(start = 8.dp)
-                    )
-                }
-            },
-            shape = RoundedCornerShape(ROUNDED_CORNER),
-            onValueChange = onValueChange::invoke,
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Gray,
-                disabledTextColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                containerColor = Color.Transparent
+                .background(
+                    color = Color.LightGray,
+                    shape = RoundedCornerShape(HORIZONTAL_MARGIN_STD)
+                )
+                .padding(horizontal = 8.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                modifier = Modifier.padding(start = 8.dp),
+                painter = painterResource(id = R.drawable.ic_search),
+                contentDescription = "Search"
             )
-        )
+
+
+            BasicTextField(
+                value = text,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .weight(1f),
+                singleLine = true,
+                textStyle = TextStyle(fontSize = 16.sp),
+                onValueChange = {
+                    onValueChange.invoke(it)
+                }, decorationBox = { innerTextField ->
+                    if (text.isEmpty())
+                        Text(text = hint)
+                    innerTextField()
+                }
+            )
+        }
     }
 }
 
-@Preview
+@Preview()
 @Composable
 fun CustomSearchViewPreview() {
 
@@ -207,22 +215,25 @@ fun CustomTopBarWithNavigate(
     Surface(shadowElevation = 4.dp, modifier = modifier) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
                     modifier = Modifier
                         .background(
-                            color = if (selected) Color.DarkGray else Color.White,
+                            color = if (selected) Color.LightGray else Color.White,
                             shape = RoundedCornerShape(percent = 50)
                         )
                         .pointerInteropFilter {
                             selected = it.action == MotionEvent.ACTION_DOWN
+                            if (it.action == MotionEvent.ACTION_UP) {
+                                navigate.invoke()
+                            }
                             true
                         }
-                        .size(40.dp)
-                        .clickable(onClick = navigate::invoke),
+                        .size(40.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
